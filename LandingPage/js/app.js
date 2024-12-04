@@ -1,40 +1,53 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const sections = document.querySelectorAll('section');
-    const navList = document.getElementById('navbar-list');
+document.addEventListener('DOMContentLoaded', function () {
+    const sections = document.getElementsByTagName('section');
+    const navbar = document.getElementById('nav-list');
 
-    // Create navbar items dynamically
-    sections.forEach(section => {
+    // Generate the navigation menu based on the page's sections
+    for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
         const navItem = document.createElement('li');
-        const navLink = document.createElement('a');
-        navLink.textContent = section.getAttribute('data-label');
-        navLink.href = `#${section.id}`;
-        navLink.classList.add('nav-link');
+        const anchor = document.createElement('a');
 
-        navLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            section.scrollIntoView({ behavior: 'smooth' });
-        });
+        anchor.innerText = section.dataset.label; // Use the custom label from the section's data attribute
+        anchor.setAttribute('href', `#${section.id}`); // Link to the section by its ID
+        anchor.className = 'nav-item';
 
-        navItem.appendChild(navLink);
-        navList.appendChild(navItem);
-    });
+        navItem.appendChild(anchor);
+        navbar.appendChild(navItem);
 
-    // Highlight active section during scrolling
-    function underlineNavOnScroll() {
-        sections.forEach(section => {
-            const rect = section.getBoundingClientRect();
-            if (rect.top <= 150 && rect.bottom >= 150) {
-                // Clear all active classes first
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-                // Add active class to the corresponding nav item
-                document.querySelector(`a[href="#${section.id}"]`).classList.add('active');
-            }
-        });
+        // Scroll smoothly to the section when a menu item is clicked
+        anchor.onclick = function (event) {
+            event.preventDefault();
+            window.scrollTo({
+                top: section.offsetTop - 50, // Account for offset to align section properly
+                behavior: 'smooth', // Smooth animation for better user experience
+            });
+        };
     }
 
-    // Initialize and attach scroll event
-    underlineNavOnScroll();
-    window.addEventListener('scroll', underlineNavOnScroll);
+    // Update the menu to highlight the active section during scroll
+    const handleScroll = function () {
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            const bounding = section.getBoundingClientRect();
+
+            if (bounding.top <= 100 && bounding.bottom >= 100) {
+                const links = document.getElementsByClassName('nav-item');
+                for (let j = 0; j < links.length; j++) {
+                    links[j].classList.remove('active'); // Remove highlight from all links
+                }
+                const currentLink = navbar.querySelector(`a[href="#${section.id}"]`);
+                if (currentLink) {
+                    currentLink.classList.add('active'); // Highlight the current section's link
+                }
+                break;
+            }
+        }
+    };
+
+    // Listen for scroll events and update the active menu item accordingly
+    window.addEventListener('scroll', handleScroll);
+
+    // Ensure the active menu item is highlighted on page load
+    handleScroll();
 });
