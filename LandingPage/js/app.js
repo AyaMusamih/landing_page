@@ -25,22 +25,24 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    // Update the menu to highlight the active section during scroll
-    const handleScroll = function () {
-        for (let i = 0; i < sections.length; i++) {
-            const section = sections[i];
+      // Function to handle active state for sections and links
+      const handleScroll = function () {
+        for (const section of sections) {
             const bounding = section.getBoundingClientRect();
 
-            if (bounding.top <= 100 && bounding.bottom >= 100) {
-                const links = document.getElementsByClassName('nav-item');
-                for (let j = 0; j < links.length; j++) {
-                    links[j].classList.remove('active'); // Remove highlight from all links
+            // Check if the section is in the viewport
+            if (bounding.top <= 150 && bounding.bottom >= 150) {
+                section.classList.add('your-active-class'); // Add active class to section
+                const link = navbar.querySelector(`a[href="#${section.id}"]`);
+                if (link) {
+                    link.classList.add('active'); // Add active class to the corresponding link
                 }
-                const currentLink = navbar.querySelector(`a[href="#${section.id}"]`);
-                if (currentLink) {
-                    currentLink.classList.add('active'); // Highlight the current section's link
+            } else {
+                section.classList.remove('your-active-class'); // Remove active class from section
+                const link = navbar.querySelector(`a[href="#${section.id}"]`);
+                if (link) {
+                    link.classList.remove('active'); // Remove active class from the link
                 }
-                break;
             }
         }
     };
